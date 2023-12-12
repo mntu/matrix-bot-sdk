@@ -29,15 +29,15 @@ const dmTarget = creds?.['dmTarget'] ?? "@admin:localhost";
 const homeserverUrl = creds?.['homeserverUrl'] ?? "http://localhost:8008";
 const accessToken = creds?.['accessToken'] ?? 'YOUR_TOKEN';
 const storage = new SimpleFsStorageProvider("./examples/storage/encryption_bot.json");
-const crypto = new RustSdkCryptoStorageProvider("./examples/storage/encryption_bot_sled", StoreType.Sled);
+const crypto = new RustSdkCryptoStorageProvider("./examples/storage/encryption_bot_sqlite", StoreType.Sqlite);
 const worksImage = fs.readFileSync("./examples/static/it-works.png");
 
 const client = new MatrixClient(homeserverUrl, accessToken, storage, crypto);
 
 (async function() {
-    let encryptedRoomId: string;
+    let encryptedRoomId: string|undefined = undefined;
     const joinedRooms = await client.getJoinedRooms();
-    await client.crypto.prepare(joinedRooms); // init crypto because we're doing things before the client is started
+    await client.crypto.prepare(); // init crypto because we're doing things before the client is started
     for (const roomId of joinedRooms) {
         if (await client.crypto.isRoomEncrypted(roomId)) {
             encryptedRoomId = roomId;
