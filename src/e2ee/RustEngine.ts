@@ -27,7 +27,7 @@ export const SYNC_LOCK_NAME = "sync";
  * @internal
  */
 export class RustEngine {
-    public readonly lock = new AsyncLock();
+    public readonly lock = new AsyncLock({maxPending: Infinity});
 
     public constructor(public readonly machine: OlmMachine, private client: MatrixClient) {
     }
